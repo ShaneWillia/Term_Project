@@ -8,48 +8,21 @@ import testGenerator.RetrieveFieldInfo;
 
 public class TestCreateMainInterface {
 	
-	public static JComboBox<String> createCoursebox()
-	{
-		String[] courselist = {"Course 1", "Course 2", "Course 3"};
-		String[] tempstring = new String[courselist.length +1];
-		tempstring[0] = "";
-		for(int i=1; i < tempstring.length; i++)
-			tempstring[i] = courselist[i-1];
-		JComboBox<String> temp = new JComboBox<String>(tempstring);
-		temp.setSelectedIndex(0);
-		return temp;
-	}
 	
-	public static JComboBox<String> createChapterbox()
-	{
-		String[] chapterlist = {"", "Chapter 1", "Chapter 2", "Chapter 3"};
-		JComboBox<String> temp = new JComboBox<String>(chapterlist);
-		temp.setSelectedIndex(0);
-		
-		return temp;
-	}
 	
-	public static JComboBox<String> createDifficultybox()
-	{
-		String[] difficultylist = {"", "difficulty 1", "difficulty 2", "difficulty 3"};
-		JComboBox<String> temp = new JComboBox<String>(difficultylist);
-		temp.setSelectedIndex(0);
-		return temp;
-	}
-	
-	public static JButton createButton(String name)
+	private static JButton createButton(String name)
 	{
 		JButton temp = new JButton(name);
 		return temp;
 	}
 	
-	public static JList<String> createList(Vector<String> vlist)
+	private static JList<String> createList(Vector<String> vlist)
 	{
 		JList<String> list = new JList<String>(vlist);
 		return list;
 	}
 	
-	public static JComboBox<String> createComboBox(Vector<String> category)
+	private static JComboBox<String> createComboBox(Vector<String> category)
 	{
 		JComboBox<String> temp = new JComboBox<String>(category);
 		temp.setSelectedIndex(0);
@@ -58,7 +31,7 @@ public class TestCreateMainInterface {
 	}
 	
 	// CREATES A SCROLLPANE WITH A SCALABLE WINDOW THAT DISPLAYS contents
-	public static JScrollPane createScrollList(JList<String> contents)
+	private static JScrollPane createScrollList(JList<String> contents)
 	{
 		contents.setVisibleRowCount(-1);
 		contents.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -70,7 +43,7 @@ public class TestCreateMainInterface {
 	
 	//THIS FUNCTION QUERIES THE DATABASE FOR A TABLE TITLED category_name
 	// AND RETURNS A VECTOR CONTAINING THE NAMES OF ALL TUPLES IN THE TABLE
-	public static Vector<String> getCategoryList(String category_name)
+	private static Vector<String> getCategoryList(String category_name)
 	{	
 		Vector<String> name_list = new Vector<String>();
 		name_list.addElement(" ");
@@ -92,14 +65,13 @@ public class TestCreateMainInterface {
 	
 	// CREATES AND RETURNS A VECTOR THAT CONTAINS ALL ELEMENTS OF questions_List
 	// THAT DO NOT EXIST IN selected_Questions
-	public static Vector<String> generateAvailableList(String[] questions_List, Vector<String> selected_Questions)
+	private static void generateAvailableList(Vector<String> available_List, String[] questions_List, Vector<String> selected_Questions)
 	{
-		Vector<String> filtered_List = new Vector<String>();
-		
+		available_List.clear();
 		for(String question: questions_List)
 			if(!selected_Questions.contains(question))
-				filtered_List.addElement(question);
-		return filtered_List;
+				available_List.addElement(question);
+		
 	}
 	
 	private static void createUI()
@@ -111,31 +83,22 @@ public class TestCreateMainInterface {
     	Vector<String> Chapter_List = new Vector<String>();
     	Vector<String> Difficulty_List = new Vector<String>();
     	
-    	final Vector<String> vAvailableList = new Vector<String>();
-        final Vector<String> vSelectedList = new Vector<String>();
+    	final Vector<String> availableVector = new Vector<String>();
+        final Vector<String> selectedVector = new Vector<String>();
  
         //Create comboboxes for parameter filters
-        //JComboBox<String> coursebox = createCoursebox();
     	Course_List = getCategoryList("Course");
         final JComboBox<String> coursebox = createComboBox(Course_List);
         coursebox.setEnabled(true);
-        //coursebox.setActionCommand("courseCB");
         
         
-        
-        
-        //JComboBox<String> chapterbox = createChapterbox();
         Chapter_List = getCategoryList("Chapter");
         final JComboBox<String> chapterbox = createComboBox(Chapter_List);
-        //chapterbox.addActionListener(ActionEvent CBActionEvent);
-        //chapterbox.setActionCommand("chapterCB");
         
         
-        //JComboBox<String> difficultybox = createDifficultybox();
         Difficulty_List = getCategoryList("Difficulty");
         final JComboBox<String> difficultybox = createComboBox(Difficulty_List);
-        //difficultybox.addActionListener(ActionEvent CBActionEvent);
-        //difficultybox.setActionCommand("difficultyCB");
+
         
         JButton random_SelectButton = createButton("Random Selection");
         JButton add_AvailableButton = createButton("ADD");
@@ -146,30 +109,15 @@ public class TestCreateMainInterface {
         JButton create_TestButton = createButton("CREATE TEST");
         JButton play_JeopardyButton = createButton("Jeopardy");
         
-        //temporary code
-        String[] list = {"Q1", "Q2", "Q3","Q4", "Q5", "Q6", "Q7", "Q8", "Q9", "Q10"};
-        
-        for(int i = 0; i < 10; i++)
-        {
-        	vAvailableList.add(list[i]);
-        }
-        //end temporary code
         
         
-        /* call generate_AvailableList here */
+        final JList<String> available_List = createList(availableVector);
+        final JScrollPane available_pane = createScrollList(available_List);
         
-        
-        
+        final JList<String> selected_List = createList(selectedVector);
+        final JScrollPane selected_pane = createScrollList(selected_List);
         /* GUI setup. Bingna, you can ignore this. */
         {
-        JList<String> available_List = createList(vAvailableList);
-        JScrollPane available_pane = createScrollList(available_List);
-        
-        JList<String> selected_List = createList(vSelectedList);
-        JScrollPane selected_pane = createScrollList(selected_List);
-        
-        
-        
         //define left side panels of GUI
         JPanel combo_panel = new JPanel(new BorderLayout());
         JPanel combo_midpanel = new JPanel(new BorderLayout());
@@ -232,17 +180,14 @@ public class TestCreateMainInterface {
         selected_buttons.add(create_TestButton, BorderLayout.WEST);
         selected_buttons.add(play_JeopardyButton, BorderLayout.EAST);
         selected_buttons.add(new JLabel("      "), BorderLayout.CENTER);
-        //add list scrollbox to CENTER
+       
         
         main_frame.getContentPane().add(lists_bigpanel,BorderLayout.CENTER);
         
         } 
         /* end of GUI setup */
         
-        /*coursebox.setBounds(40, 20, 10, 20);
-        chapterbox.setBounds(40, 60, 10, 20);
-        difficultybox.setBounds(40, 100, 10,20);
-        */
+        
         
         
         // Functionality
@@ -272,9 +217,9 @@ public class TestCreateMainInterface {
         	{
         		//update the list of options for chapterbox based on coursebox.getSelected()
         		chapterbox.setEnabled(true);
-        		chapterbox.setSelectedIndex(0);
+        		//chapterbox.setSelectedIndex(0);
         		difficultybox.setEnabled(false);
-        		difficultybox.setSelectedIndex(0);
+        		//difficultybox.setSelectedIndex(0);
         	}
         });
         
@@ -284,7 +229,7 @@ public class TestCreateMainInterface {
         	{
         		//update the list of options for difficultybox based on chapterbox.getSelected()
         		difficultybox.setEnabled(true);
-        		difficultybox.setSelectedIndex(0);
+        		//difficultybox.setSelectedIndex(0);
         	}
         });
         
@@ -293,14 +238,21 @@ public class TestCreateMainInterface {
         	public void actionPerformed(ActionEvent select)
         	{
         		
-        		/*
-        		 * vAvailableList = generateAvailableList(GetQuestions(
+        		/* function GetQuestions is a placeholder function name, pending
+        		generateAvailableList(availableVector, GetQuestions(
         				coursebox.getSelectedItem(),
         				chapterbox.getSelectedItem(),
-        				difficultybox.getSelectedItem()));
+        				difficultybox.getSelectedItem()), selectedVector);
         		*/
+        		
+        		/* temporary list generator; can be deleted later */
+        		String[] list = {"Q1", "Q2", "Q3","Q4", "Q5", "Q6", "Q7", "Q8", "Q9", "Q10"};
+        		generateAvailableList(availableVector, list, selectedVector);
+        		/* */
+        		
+        		available_List.setListData(availableVector);
         	}
-        });
+        }); 
         
         add_AvailableButton.addActionListener(new ActionListener()
         {
